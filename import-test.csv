@@ -1,0 +1,4 @@
+Title,Platform,Difficulty,Topic,URL,Notes,Date Solved
+LRU Cache,LeetCode,Medium,Design,https://leetcode.com/problems/lru-cache/,"Classic hashmap + doubly linked list problem",2026-07-02
+Merge Intervals,LeetCode,Medium,Intervals,https://leetcode.com/problems/merge-intervals/,"Need to sort before merging",2026-07-02
+Word Break,LeetCode,Medium,Dynamic Programming,https://leetcode.com/problems/word-break/,"1D DP with dictionary lookup",2026-07-02

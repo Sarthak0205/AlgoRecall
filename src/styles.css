@@ -87,13 +87,15 @@
   --chart-5: oklch(0.7 0.15 200);
 
   --gradient-hero: radial-gradient(
-      ellipse 80% 60% at 50% 0%,
-      color-mix(in oklab, var(--primary) 22%, transparent),
-      transparent 70%
-    );
-  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 4%) inset,
-    0 0 0 1px oklch(1 0 0 / 3%), 0 12px 32px -16px oklch(0 0 0 / 50%);
-  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--primary) 30%, transparent),
+    ellipse 80% 60% at 50% 0%,
+    color-mix(in oklab, var(--primary) 22%, transparent),
+    transparent 70%
+  );
+  --shadow-card:
+    0 1px 0 0 oklch(1 0 0 / 4%) inset, 0 0 0 1px oklch(1 0 0 / 3%),
+    0 12px 32px -16px oklch(0 0 0 / 50%);
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--primary) 30%, transparent),
     0 12px 40px -8px color-mix(in oklab, var(--primary) 35%, transparent);
 }
 

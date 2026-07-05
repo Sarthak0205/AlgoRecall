@@ -19,9 +19,7 @@ function NotFoundComponent() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold">404</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          That page doesn't exist.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">That page doesn't exist.</p>
         <Link
           to="/"
           className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
@@ -43,9 +41,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Try again or head back home.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Try again or head back home.</p>
         <div className="mt-6 flex justify-center gap-2">
           <button
             onClick={() => {

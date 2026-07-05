@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { TopicSelect } from "@/components/topic-select";
 import {
   problemSchema,
   PLATFORMS,
@@ -15,6 +16,10 @@ import {
 import { updateProblem } from "@/lib/problems.functions";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
+import { z } from "zod";
+import type { Database } from "@/integrations/supabase/types";
+
+type ProblemRow = Database["public"]["Tables"]["problems"]["Row"];
 
 export const Route = createFileRoute("/_authenticated/edit/$id")({
   head: () => ({ meta: [{ title: "Edit problem — AlgoRecall" }] }),
@@ -27,14 +32,14 @@ function EditProblem() {
   const queryClient = useQueryClient();
   const submit = useServerFn(updateProblem);
 
-  const { data: problem, isLoading, error } = useQuery({
+  const {
+    data: problem,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["problem", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("problems")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const { data, error } = await supabase.from("problems").select("*").eq("id", id).single();
       if (error) throw error;
       return data;
     },
@@ -49,14 +54,20 @@ function EditProblem() {
     );
   }
 
-  return <EditForm problem={problem} submit={submit} onSaved={() => {
-    toast.success("Problem updated successfully.");
-    queryClient.invalidateQueries({ queryKey: ["problems"] });
-    queryClient.invalidateQueries({ queryKey: ["due-problems"] });
-    queryClient.invalidateQueries({ queryKey: ["problem", id] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard"] });
-    navigate({ to: "/problems" });
-  }} />;
+  return (
+    <EditForm
+      problem={problem}
+      submit={submit}
+      onSaved={() => {
+        toast.success("Problem updated successfully.");
+        queryClient.invalidateQueries({ queryKey: ["problems"] });
+        queryClient.invalidateQueries({ queryKey: ["due-problems"] });
+        queryClient.invalidateQueries({ queryKey: ["problem", id] });
+        queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        navigate({ to: "/problems" });
+      }}
+    />
+  );
 }
 
 function EditForm({
@@ -64,8 +75,8 @@ function EditForm({
   submit,
   onSaved,
 }: {
-  problem: any;
-  submit: (args: { data: any }) => Promise<any>;
+  problem: ProblemRow;
+  submit: (args: { data: { id: string } & z.infer<typeof problemSchema> }) => Promise<unknown>;
   onSaved: () => void;
 }) {
   const navigate = useNavigate();
@@ -115,7 +126,7 @@ function EditForm({
     }
   }
 
-  const platformInList = PLATFORMS.includes(form.platform as any);
+  const platformInList = (PLATFORMS as readonly string[]).includes(form.platform);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -168,12 +179,11 @@ function EditForm({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Topic" error={errors.topic} counter={`${[...form.topic].length}/${TOPIC_MAX}`}>
-            <input
+          <Field label="Topic" error={errors.topic}>
+            <TopicSelect
               value={form.topic}
-              onChange={(e) => update("topic", e.target.value)}
-              className={inputCls}
-              aria-invalid={!!errors.topic}
+              onChange={(val) => update("topic", val)}
+              error={errors.topic}
             />
           </Field>
           <Field label="Date solved" error={errors.solved_date}>

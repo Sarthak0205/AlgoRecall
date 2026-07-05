@@ -153,11 +153,6 @@ function Problems() {
 }
 
 function DiffBadge({ d }: { d: string }) {
-  const cls =
-    d === "Easy"
-      ? "text-success"
-      : d === "Medium"
-        ? "text-warning"
-        : "text-destructive";
+  const cls = d === "Easy" ? "text-success" : d === "Medium" ? "text-warning" : "text-destructive";
   return <span className={`font-medium ${cls}`}>{d}</span>;
 }

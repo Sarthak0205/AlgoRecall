@@ -55,8 +55,8 @@ function Landing() {
             again.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground">
-            Log every LeetCode and DSA problem you crack. AlgoRecall surfaces it
-            again on Day 1, 3, 7, 14, 30, and 60 — so the pattern is yours for good.
+            Log every LeetCode and DSA problem you crack. AlgoRecall surfaces it again on Day 1, 3,
+            7, 14, 30, and 60 — so the pattern is yours for good.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Link

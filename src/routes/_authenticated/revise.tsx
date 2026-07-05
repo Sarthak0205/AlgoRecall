@@ -1,12 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  INTERVALS,
-  daysFromNow,
-  nextIntervalIndex,
-  todayISO,
-} from "@/lib/spaced-repetition";
+import { INTERVALS, daysFromNow, nextIntervalIndex, todayISO } from "@/lib/spaced-repetition";
 import { useState } from "react";
 import { Check, Eye, EyeOff, RotateCcw, ExternalLink, PartyPopper, Pencil } from "lucide-react";
 import { toast } from "sonner";
@@ -80,8 +75,7 @@ function Revise() {
       queryClient.invalidateQueries({ queryKey: ["due-problems"] });
       queryClient.invalidateQueries({ queryKey: ["problems"] });
     },
-    onError: (err) =>
-      toast.error(err instanceof Error ? err.message : "Failed to update"),
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to update"),
   });
 
   if (isLoading) {

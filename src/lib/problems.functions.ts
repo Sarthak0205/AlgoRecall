@@ -6,7 +6,7 @@ import { daysFromNow, todayISO } from "./spaced-repetition";
 
 export const createProblem = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => problemSchema.parse(data))
+  .validator((data: unknown) => problemSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { error, data: inserted } = await supabase
@@ -33,7 +33,7 @@ const updateSchema = problemSchema.extend({ id: z.string().uuid() });
 
 export const updateProblem = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => updateSchema.parse(data))
+  .validator((data: unknown) => updateSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { id, ...fields } = data;
@@ -62,7 +62,7 @@ const bulkSchema = z.object({
 
 export const bulkCreateProblems = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => bulkSchema.parse(data))
+  .validator((data: unknown) => bulkSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const today = todayISO();
@@ -78,10 +78,7 @@ export const bulkCreateProblems = createServerFn({ method: "POST" })
       interval_index: 0,
       next_review_date: today,
     }));
-    const { error, data: inserted } = await supabase
-      .from("problems")
-      .insert(payload)
-      .select("id");
+    const { error, data: inserted } = await supabase.from("problems").insert(payload).select("id");
     if (error) throw new Error(error.message);
     return { inserted: inserted?.length ?? 0 };
   });

@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { todayISO } from "@/lib/spaced-repetition";
+import { TopicSelect } from "@/components/topic-select";
 import {
   problemSchema,
   PLATFORMS,
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/add")({
 
 function AddProblem() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const submit = useServerFn(createProblem);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -61,6 +64,10 @@ function AddProblem() {
     setLoading(true);
     try {
       await submit({ data: parsed.data });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["problems"] }),
+        queryClient.invalidateQueries({ queryKey: ["due-problems"] }),
+      ]);
       toast.success("Problem added. First review in 1 day.");
       navigate({ to: "/dashboard" });
     } catch (err) {
@@ -121,13 +128,11 @@ function AddProblem() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Topic" error={errors.topic} counter={`${[...form.topic].length}/${TOPIC_MAX}`}>
-            <input
+          <Field label="Topic" error={errors.topic}>
+            <TopicSelect
               value={form.topic}
-              onChange={(e) => update("topic", e.target.value)}
-              placeholder="Arrays, DP, Graph..."
-              className={inputCls}
-              aria-invalid={!!errors.topic}
+              onChange={(val) => update("topic", val)}
+              error={errors.topic}
             />
           </Field>
           <Field label="Date solved" error={errors.solved_date}>

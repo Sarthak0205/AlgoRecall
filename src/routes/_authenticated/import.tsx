@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import Papa from "papaparse";
 import { Upload, FileSpreadsheet, CheckCircle2, AlertTriangle, X } from "lucide-react";
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/import")({
 
 function ImportPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const submit = useServerFn(bulkCreateProblems);
   const [fileName, setFileName] = useState<string>("");
   const [rows, setRows] = useState<ParsedRow[]>([]);
@@ -51,6 +53,10 @@ function ImportPage() {
     setImporting(true);
     try {
       const res = await submit({ data: { rows: valid.map((r) => r.data!) } });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["problems"] }),
+        queryClient.invalidateQueries({ queryKey: ["due-problems"] }),
+      ]);
       toast.success(`Imported ${res.inserted} problems. First review today.`);
       navigate({ to: "/problems" });
     } catch (err) {
@@ -69,7 +75,8 @@ function ImportPage() {
     <div className="mx-auto max-w-5xl">
       <h1 className="text-2xl font-semibold tracking-tight">Import from CSV</h1>
       <p className="text-sm text-muted-foreground">
-        Upload a Notion (or compatible) CSV export. All imported problems start at Day 1 review today.
+        Upload a Notion (or compatible) CSV export. All imported problems start at Day 1 review
+        today.
       </p>
 
       {rows.length === 0 ? (
@@ -133,7 +140,10 @@ function ImportPage() {
               <h2 className="mb-2 text-sm font-semibold text-amber-400">Invalid rows</h2>
               <ul className="space-y-2 text-xs">
                 {invalid.map((r) => (
-                  <li key={r.rowNumber} className="rounded-md border border-border bg-background p-2">
+                  <li
+                    key={r.rowNumber}
+                    className="rounded-md border border-border bg-background p-2"
+                  >
                     <div className="font-medium">
                       Row {r.rowNumber}: {r.raw["Problem Name"] || r.raw["Title"] || "(no title)"}
                     </div>
@@ -166,7 +176,9 @@ function ImportPage() {
                   const ok = r.errors.length === 0;
                   return (
                     <tr key={r.rowNumber} className="border-t border-border">
-                      <td className="px-3 py-2 text-muted-foreground tabular-nums">{r.rowNumber}</td>
+                      <td className="px-3 py-2 text-muted-foreground tabular-nums">
+                        {r.rowNumber}
+                      </td>
                       <td className="px-3 py-2">
                         {ok ? (
                           <span className="text-emerald-400">✓</span>
@@ -178,7 +190,9 @@ function ImportPage() {
                         {r.data?.title || r.raw["Problem Name"] || r.raw["Title"] || ""}
                       </td>
                       <td className="px-3 py-2">{r.data?.topic || r.raw["Topic"] || "General"}</td>
-                      <td className="px-3 py-2">{r.data?.difficulty || r.raw["Difficulty"] || ""}</td>
+                      <td className="px-3 py-2">
+                        {r.data?.difficulty || r.raw["Difficulty"] || ""}
+                      </td>
                       <td className="px-3 py-2">{r.data?.platform || r.raw["Platform"] || ""}</td>
                       <td className="px-3 py-2 tabular-nums">
                         {r.data?.solved_date || r.raw["Date Solved"] || ""}

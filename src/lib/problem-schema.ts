@@ -18,9 +18,7 @@ export const URL_MAX = 2000;
 export const PLATFORM_MAX = 50;
 
 // ISO date YYYY-MM-DD
-const isoDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Please enter a valid date." });
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Please enter a valid date." });
 
 export const problemSchema = z.object({
   title: z

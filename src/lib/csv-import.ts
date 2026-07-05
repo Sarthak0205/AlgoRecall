@@ -1,5 +1,58 @@
 import { z } from "zod";
 import { problemSchema, DIFFICULTIES } from "./problem-schema";
+import { TOPICS } from "./topics";
+
+const TOPIC_ALIASES: Record<string, string> = {
+  dp: "Dynamic Programming",
+
+  bst: "Trees",
+  tree: "Trees",
+  trees: "Trees",
+
+  graph: "Graph",
+  graphs: "Graph",
+
+  array: "Arrays",
+  arrays: "Arrays",
+
+  string: "Strings",
+  strings: "Strings",
+
+  ll: "Linked List",
+  linkedlist: "Linked List",
+
+  bs: "Binary Search",
+
+  interval: "Intervals",
+  intervals: "Intervals",
+
+  heap: "Heap",
+
+  slidingwindow: "Sliding Window",
+  "sliding window": "Sliding Window",
+
+  twopointers: "Two Pointers",
+  "two pointers": "Two Pointers",
+};
+
+export function normalizeTopic(input: string): string {
+  const clean = input.trim();
+  if (!clean) return "General";
+
+  const lower = clean.toLowerCase();
+
+  // If alias exists -> standardized topic
+  if (TOPIC_ALIASES[lower]) {
+    return TOPIC_ALIASES[lower];
+  }
+
+  // If exact topic exists (case-insensitive) -> keep standardized casing
+  const matched = TOPICS.find((t) => t.toLowerCase() === lower);
+  if (matched) return matched;
+
+  // Otherwise -> preserve original value as legacy
+  return clean;
+}
 
 export type RawCsvRow = Record<string, string | undefined>;
 
@@ -37,7 +90,10 @@ function emptyMap() {
 }
 
 function normKey(k: string): string {
-  return k.replace(/^\uFEFF/, "").trim().toLowerCase();
+  return k
+    .replace(/^\uFEFF/, "")
+    .trim()
+    .toLowerCase();
 }
 
 // Parse a date string like "May 9, 2026", "2026-05-09", "9 May 2026"
@@ -74,7 +130,7 @@ export function mapAndValidate(raw: RawCsvRow, rowNumber: number): ParsedRow {
   const errors: string[] = [];
 
   const title = mapped.title.trim();
-  const topic = mapped.topic.trim() || "General";
+  const topic = normalizeTopic(mapped.topic);
   const platform = mapped.platform.trim() || "Other";
   const url = mapped.url.trim();
   const notes = mapped.notes; // preserve newlines & whitespace

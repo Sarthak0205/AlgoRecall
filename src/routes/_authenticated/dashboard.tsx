@@ -60,9 +60,7 @@ function Dashboard() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Your spaced-repetition memory bank.
-          </p>
+          <p className="text-sm text-muted-foreground">Your spaced-repetition memory bank.</p>
         </div>
         <Link
           to="/add"
@@ -81,7 +79,12 @@ function Dashboard() {
           tint="warning"
           cta={due > 0 ? { to: "/revise", label: "Revise now" } : undefined}
         />
-        <Stat icon={Flame} label="Current streak" value={isLoading ? "—" : `${streak}d`} tint="primary" />
+        <Stat
+          icon={Flame}
+          label="Current streak"
+          value={isLoading ? "—" : `${streak}d`}
+          tint="primary"
+        />
         <Stat
           icon={TrendingUp}
           label="Mastered (Day 60)"
@@ -119,9 +122,7 @@ function Dashboard() {
           <h2 className="text-sm font-semibold">Recent activity</h2>
           <p className="text-xs text-muted-foreground">Latest problems you logged.</p>
           <div className="mt-4 space-y-2">
-            {recent.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nothing yet.</p>
-            )}
+            {recent.length === 0 && <p className="text-sm text-muted-foreground">Nothing yet.</p>}
             {recent.map((p) => (
               <div
                 key={p.id}
@@ -196,12 +197,7 @@ function Stat({
 }
 
 function DiffBadge({ d }: { d: string }) {
-  const cls =
-    d === "Easy"
-      ? "text-success"
-      : d === "Medium"
-        ? "text-warning"
-        : "text-destructive";
+  const cls = d === "Easy" ? "text-success" : d === "Medium" ? "text-warning" : "text-destructive";
   return <span className={`font-medium ${cls}`}>{d}</span>;
 }
 
