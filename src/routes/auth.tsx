@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { Brain } from "lucide-react";
 import { toast } from "sonner";
+import { redirectIfAuthenticated } from "@/lib/auth-redirect";
 
 export const Route = createFileRoute("/auth")({
+  beforeLoad: redirectIfAuthenticated,
   head: () => ({
     meta: [
       { title: "Sign in — AlgoRecall" },
@@ -27,7 +28,9 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
+      if (data.session) {
+        navigate({ to: "/dashboard", replace: true });
+      }
     });
   }, [navigate]);
 
@@ -56,15 +59,16 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
     });
-    if (result.error) {
+    if (error) {
       toast.error("Google sign-in failed");
       return;
     }
-    if (result.redirected) return;
-    navigate({ to: "/dashboard", replace: true });
   }
 
   return (
@@ -85,9 +89,7 @@ function AuthPage() {
               ? "Sign in to keep your review streak alive."
               : "Start locking in problems you've already solved."}
           </p>
-
-          {/* TODO: Re-enable after configuring our own Google OAuth provider in Supabase. */}
-          {/* <button
+          <button
             type="button"
             onClick={handleGoogle}
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
@@ -99,7 +101,7 @@ function AuthPage() {
             <div className="h-px flex-1 bg-border" />
             or
             <div className="h-px flex-1 bg-border" />
-          </div> */}
+          </div>
 
           <form onSubmit={handleEmail} className="space-y-3">
             <div>

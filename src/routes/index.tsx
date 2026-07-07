@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Brain, Calendar, Flame, Sparkles, ArrowRight, Code2 } from "lucide-react";
+import { redirectIfAuthenticated } from "@/lib/auth-redirect";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: redirectIfAuthenticated,
   head: () => ({
     meta: [
       { title: "AlgoRecall — Never forget a solved problem again" },

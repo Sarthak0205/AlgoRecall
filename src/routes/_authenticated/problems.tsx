@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { INTERVALS, todayISO } from "@/lib/spaced-repetition";
-import { ExternalLink, Trash2, Plus, Pencil } from "lucide-react";
+import { ExternalLink, Trash2, Plus, Pencil, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/problems")({
@@ -17,6 +17,7 @@ type Problem = {
   difficulty: string;
   topic: string;
   url: string | null;
+  notes: string | null;
   interval_index: number;
   next_review_date: string;
   solved_date: string;
@@ -50,6 +51,67 @@ function Problems() {
 
   const today = todayISO();
 
+  const handleExportCSV = () => {
+    if (problems.length === 0) {
+      toast.error("No problems to export.");
+      return;
+    }
+
+    const escapeCSVField = (val: string | null | undefined): string => {
+      if (val === null || val === undefined) return "";
+      let str = String(val);
+      const hasSpecialChar = /["\n\r,]/.test(str);
+      if (hasSpecialChar) {
+        str = str.replace(/"/g, '""');
+        return `"${str}"`;
+      }
+      return str;
+    };
+
+    // Sort by solved_date descending
+    const sorted = [...problems].sort((a, b) => b.solved_date.localeCompare(a.solved_date));
+
+    // Cannonical schema headers
+    const headers = ["Title", "Platform", "Difficulty", "Topic", "URL", "Notes", "Date Solved"];
+
+    const rows = sorted.map((p) => [
+      p.title,
+      p.platform,
+      p.difficulty,
+      p.topic,
+      p.url ?? "",
+      p.notes ?? "",
+      p.solved_date,
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.map(escapeCSVField).join(",")),
+    ].join("\n");
+
+    // Add UTF-8 BOM to preserve emojis & unicode chars, and trigger file download
+    const blob = new Blob([new Uint8Array([0xef, 0xbb, 0xbf]), csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const localDateStr = `${year}-${month}-${day}`;
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `algorecall-export-${localDateStr}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success("CSV exported successfully");
+  };
+
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -59,12 +121,20 @@ function Problems() {
             {problems.length} total — sorted by next review.
           </p>
         </div>
-        <Link
-          to="/add"
-          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-        >
-          <Plus className="h-4 w-4" /> Add problem
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-accent cursor-pointer"
+          >
+            <Download className="h-4 w-4" /> Export CSV
+          </button>
+          <Link
+            to="/add"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" /> Add problem
+          </Link>
+        </div>
       </div>
 
       <div className="surface-card mt-6 overflow-hidden">
