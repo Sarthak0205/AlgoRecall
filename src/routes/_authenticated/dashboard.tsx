@@ -22,6 +22,7 @@ type Problem = {
   platform: string;
   difficulty: string;
   topic: string;
+  pattern: string | null;
   url: string | null;
   notes: string | null;
   solved_date: string;
@@ -134,7 +135,10 @@ function Dashboard() {
                     <DiffBadge d={p.difficulty} />
                     <span>{p.platform}</span>
                     <span>·</span>
-                    <span>{p.topic}</span>
+                    <span>
+                      {p.topic}
+                      {p.pattern ? ` · ${p.pattern}` : ""}
+                    </span>
                   </div>
                 </div>
                 {p.url && (

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brain } from "lucide-react";
 import { toast } from "sonner";
@@ -25,14 +25,6 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        navigate({ to: "/dashboard", replace: true });
-      }
-    });
-  }, [navigate]);
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();

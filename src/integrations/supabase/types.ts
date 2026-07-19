@@ -20,6 +20,7 @@ export type Database = {
           platform: string;
           solved_date: string;
           title: string;
+          pattern: string | null;
           topic: string;
           updated_at: string;
           url: string | null;
@@ -35,6 +36,7 @@ export type Database = {
           notes?: string | null;
           platform?: string;
           solved_date?: string;
+          pattern?: string | null;
           title: string;
           topic?: string;
           updated_at?: string;
@@ -51,6 +53,7 @@ export type Database = {
           notes?: string | null;
           platform?: string;
           solved_date?: string;
+          pattern?: string | null;
           title?: string;
           topic?: string;
           updated_at?: string;

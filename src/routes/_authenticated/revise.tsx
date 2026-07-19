@@ -17,6 +17,7 @@ type Problem = {
   platform: string;
   difficulty: string;
   topic: string;
+  pattern: string | null;
   url: string | null;
   notes: string | null;
   interval_index: number;
@@ -136,6 +137,11 @@ function Revise() {
           <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
             {current.topic}
           </span>
+          {current.pattern && (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+              {current.pattern}
+            </span>
+          )}
         </div>
 
         <div className="mt-3 flex items-start justify-between gap-3">

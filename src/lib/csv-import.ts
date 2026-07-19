@@ -75,12 +75,15 @@ const HEADER_MAP: Record<string, keyof ReturnType<typeof emptyMap>> = {
   link: "url",
   url: "url",
   notes: "notes",
+  pattern: "pattern",
+  patterns: "pattern",
 };
 
 function emptyMap() {
   return {
     title: "",
     topic: "",
+    pattern: "",
     difficulty: "",
     platform: "",
     solved_date: "",
@@ -131,6 +134,7 @@ export function mapAndValidate(raw: RawCsvRow, rowNumber: number): ParsedRow {
 
   const title = mapped.title.trim();
   const topic = normalizeTopic(mapped.topic);
+  const pattern = mapped.pattern.trim();
   const platform = mapped.platform.trim() || "Other";
   const url = mapped.url.trim();
   const notes = mapped.notes; // preserve newlines & whitespace
@@ -153,6 +157,7 @@ export function mapAndValidate(raw: RawCsvRow, rowNumber: number): ParsedRow {
   const candidate = {
     title,
     topic,
+    pattern,
     platform,
     difficulty: difficulty as (typeof DIFFICULTIES)[number],
     url: url || "",

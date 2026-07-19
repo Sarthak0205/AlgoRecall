@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { todayISO } from "@/lib/spaced-repetition";
 import { TopicSelect } from "@/components/topic-select";
+import { PatternSelect } from "@/components/pattern-select";
 import {
   problemSchema,
   PLATFORMS,
@@ -33,6 +34,7 @@ function AddProblem() {
     platform: "LeetCode",
     difficulty: "Medium" as (typeof DIFFICULTIES)[number],
     topic: "",
+    pattern: "",
     url: "",
     notes: "",
     solved_date: todayISO(),
@@ -135,6 +137,17 @@ function AddProblem() {
               error={errors.topic}
             />
           </Field>
+          <Field label="Pattern (optional)" error={errors.pattern}>
+            <PatternSelect
+              value={form.pattern}
+              onChange={(val) => update("pattern", val)}
+              selectedTopic={form.topic}
+              error={errors.pattern}
+            />
+          </Field>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Date solved" error={errors.solved_date}>
             <input
               type="date"

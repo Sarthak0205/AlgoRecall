@@ -86,7 +86,8 @@ function ImportPage() {
             {parsing ? "Parsing..." : "Click to choose a CSV file"}
           </div>
           <div className="text-xs text-muted-foreground">
-            Expected columns: Problem Name, Topic, Difficulty, Platform, Date Solved, Link, Notes
+            Expected columns: Problem Name, Topic, Pattern, Difficulty, Platform, Date Solved, Link,
+            Notes
           </div>
           <input
             type="file"
@@ -166,6 +167,7 @@ function ImportPage() {
                   <th className="px-3 py-2">Status</th>
                   <th className="px-3 py-2">Title</th>
                   <th className="px-3 py-2">Topic</th>
+                  <th className="px-3 py-2">Pattern</th>
                   <th className="px-3 py-2">Difficulty</th>
                   <th className="px-3 py-2">Platform</th>
                   <th className="px-3 py-2">Date Solved</th>
@@ -190,6 +192,9 @@ function ImportPage() {
                         {r.data?.title || r.raw["Problem Name"] || r.raw["Title"] || ""}
                       </td>
                       <td className="px-3 py-2">{r.data?.topic || r.raw["Topic"] || "General"}</td>
+                      <td className="px-3 py-2">
+                        {r.data?.pattern || r.raw["Pattern"] || r.raw["Patterns"] || ""}
+                      </td>
                       <td className="px-3 py-2">
                         {r.data?.difficulty || r.raw["Difficulty"] || ""}
                       </td>

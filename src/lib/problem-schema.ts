@@ -13,6 +13,7 @@ export const DIFFICULTIES = ["Easy", "Medium", "Hard"] as const;
 
 export const TITLE_MAX = 200;
 export const TOPIC_MAX = 80;
+export const PATTERN_MAX = 200;
 export const NOTES_MAX = 10000;
 export const URL_MAX = 2000;
 export const PLATFORM_MAX = 50;
@@ -38,6 +39,12 @@ export const problemSchema = z.object({
     .string()
     .trim()
     .max(TOPIC_MAX, { message: `Topic must be less than ${TOPIC_MAX} characters.` })
+    .optional()
+    .or(z.literal("")),
+  pattern: z
+    .string()
+    .trim()
+    .max(PATTERN_MAX, { message: `Pattern must be less than ${PATTERN_MAX} characters.` })
     .optional()
     .or(z.literal("")),
   url: z
